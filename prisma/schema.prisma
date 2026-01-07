@@ -47,7 +47,7 @@ model Comment {
   parentId  String?
   parent    Comment?      @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies   Comment[]     @relation("CommentReplies")
-  status    CommentStatus
+  status    CommentStatus @default(APPROVED)
   createdAt DateTime      @default(now())
   updatedAT DateTime      @updatedAt
 

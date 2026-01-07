@@ -1,5 +1,5 @@
 
-import { Post, PostStatus } from "../../../generated/prisma/client"
+import { CommentStatus, Post, PostStatus } from "../../../generated/prisma/client"
 import { PostWhereInput } from "../../../generated/prisma/models"
 import { prisma } from "../../lib/prisma"
 
@@ -64,6 +64,13 @@ const findAllPost= async(search:string,allTags:string[]|[],isFeatured:boolean,st
         orderBy:
             {
                 [sortBy]:sortOrder
+            },
+            include:{
+                _count:{
+                    select:{
+                        comments:true
+                    }
+                }
             }
         
     })
@@ -105,6 +112,54 @@ const findAllPost= async(search:string,allTags:string[]|[],isFeatured:boolean,st
     const result= await tx.post.findUnique({
         where:{
             id
+        },
+        include:{
+            comments:{
+                where:{
+                    parentId:null,
+                    status:CommentStatus.APPROVED
+                },
+                orderBy:{
+                    createdAt:"desc"
+                },
+                include:{
+                    
+                    replies:{
+                        where:{
+                           status:CommentStatus.APPROVED 
+                        },
+                        orderBy:{
+                    createdAt:"asc"
+                },
+                        include:{
+                            replies:{
+                                where:{
+                           status:CommentStatus.APPROVED 
+                        },orderBy:{
+                    createdAt:"asc"
+                },
+                                include:{
+                                    replies:{
+                                        where:{
+                           status:CommentStatus.APPROVED 
+                        },
+                        orderBy:{
+                    createdAt:"asc"
+                },
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            _count:{
+                select:{
+                    comments:true
+                }
+            }
+
+            
         }
     })
     return result

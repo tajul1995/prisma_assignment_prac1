@@ -28,7 +28,7 @@ CREATE TABLE "comments" (
     "authorId" TEXT NOT NULL,
     "postId" TEXT NOT NULL,
     "parentId" TEXT,
-    "status" "CommentStatus" NOT NULL,
+    "status" "CommentStatus" NOT NULL DEFAULT 'APPROVED',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAT" TIMESTAMP(3) NOT NULL,
 

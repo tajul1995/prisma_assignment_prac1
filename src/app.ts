@@ -3,6 +3,7 @@ import { postRouter } from "./modules/post/post.router"
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import cors from 'cors'
+import { commentRouter } from "./modules/comments/comment.router";
 
 const app=express()
 app.all("/api/auth/*splat", toNodeHandler(auth));
@@ -14,5 +15,6 @@ app.use(cors({
 }))
 
 app.use('/posts',postRouter)
+app.use('/comments',commentRouter)
 
 export default app
