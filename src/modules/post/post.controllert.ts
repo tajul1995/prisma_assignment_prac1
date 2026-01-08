@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { postService } from "./post.service";
 import { PostStatus } from "../../../generated/prisma/enums";
 import paginationSortingHelpers from "../../helpers/paginationSortingHelpers";
+import { UserRole } from "../../middleWare/auth";
 
 const createPost=async(req:Request,res: Response)=>{
     try {
@@ -116,13 +117,15 @@ const updateUserOwnPost=async(req:Request,res:Response)=>{
 
     try {
             const user= req.user
+            //  console.log(user)
             const {postId}=req.params
             // console.log(user)
             if(!user){
                 throw new Error("user is not valied")
             }
-            
-         const result = await postService.updateUserOwnPost(postId as string,req.body,user.id)
+            const isAdmin= user.role === UserRole.ADMIN
+            // console.log(isAdmin)
+         const result = await postService.updateUserOwnPost(postId as string,req.body,user.id,isAdmin as boolean)
         //  console.log(user)
          res.status(200).json({
             success:true,

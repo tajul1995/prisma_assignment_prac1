@@ -207,13 +207,19 @@ const findAllPost= async(search:string,allTags:string[]|[],isFeatured:boolean,st
  }
 
 
- const updateUserOwnPost= async(id:string,data:Partial<Post>,authorId:string)=>{
-    await prisma.post.findUniqueOrThrow({
+ const updateUserOwnPost= async(id:string,data:Partial<Post>,authorId:string,isAdmin:boolean)=>{
+ await prisma.post.findUniqueOrThrow({
         where:{
             id,
             authorId
+            
         }
+        
     })
+    if(!isAdmin){
+        delete data.isFeatured
+        
+    }
     const result= await prisma.post.update({
         where:{
             id
