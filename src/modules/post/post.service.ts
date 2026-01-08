@@ -167,9 +167,66 @@ const findAllPost= async(search:string,allTags:string[]|[],isFeatured:boolean,st
 
     
  }
+ const getMyPosts= async(authorId:string)=>{
+     await prisma.user.findUniqueOrThrow({
+        where:{
+            id:authorId,
+            status:"ACTIVE"
+        }
+    })
+    
+    const result= await prisma.post.findMany({
+        where:{
+            authorId
+        },
+        include:{
+            _count:{
+                select:{
+                    comments:true
+                }
+            }
+        }
+    })
+    const total = await prisma.post.count({
+        where:{
+            authorId
+        }
+    })
+    // const total1=await prisma.post.aggregate({
+    //     _count:{
+    //         id:true
+    //     },
+    //     where:{
+    //         authorId
+    //     }
+    // })
+    return {
+        result,
+        totalposts:total
+    }
+ }
+
+
+ const updateUserOwnPost= async(id:string,data:Partial<Post>,authorId:string)=>{
+    await prisma.post.findUniqueOrThrow({
+        where:{
+            id,
+            authorId
+        }
+    })
+    const result= await prisma.post.update({
+        where:{
+            id
+        },
+        data
+    })
+    return result
+ }
 export  const postService={
     createPost,
     findAllPost,
-    findPostById
+    findPostById,
+    getMyPosts,
+    updateUserOwnPost
 
 }

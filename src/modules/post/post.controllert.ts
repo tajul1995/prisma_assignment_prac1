@@ -83,9 +83,69 @@ const findPostById=async(req:Request,res:Response)=>{
 
 }
 
+const getMyPosts=async(req:Request,res:Response)=>{
+
+    try {
+            const user= req.user
+            // console.log(user)
+            if(!user){
+                throw new Error("user is not valied")
+            }
+            
+         const result = await postService.getMyPosts(user.id)
+        //  console.log(user)
+         res.status(200).json({
+            success:true,
+            message:' get my post  successfully',
+            data:result
+        })
+    } catch (error:any) {
+        console.log(error)
+        res.status(404).json({
+            success:false,
+            message:'post get fetch failed',
+            data:error.message
+        })
+    }
+   
+
+}
+
+
+const updateUserOwnPost=async(req:Request,res:Response)=>{
+
+    try {
+            const user= req.user
+            const {postId}=req.params
+            // console.log(user)
+            if(!user){
+                throw new Error("user is not valied")
+            }
+            
+         const result = await postService.updateUserOwnPost(postId as string,req.body,user.id)
+        //  console.log(user)
+         res.status(200).json({
+            success:true,
+            message:' updated post  successfully',
+            data:result
+        })
+    } catch (error:any) {
+        console.log(error)
+        res.status(404).json({
+            success:false,
+            message:'post does not updated failed',
+            data:error.message
+        })
+    }
+   
+
+}
+
 
 export const postController={
         createPost,
         findAllPost,
-        findPostById
+        findPostById,
+        getMyPosts,
+        updateUserOwnPost
 }
