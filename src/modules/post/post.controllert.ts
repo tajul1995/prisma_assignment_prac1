@@ -144,11 +144,68 @@ const updateUserOwnPost=async(req:Request,res:Response)=>{
 
 }
 
+const deletePost=async(req:Request,res:Response)=>{
 
+    try {
+            const user= req.user
+            //  console.log(user)
+            const {postId}=req.params
+            // console.log(user)
+            if(!user){
+                throw new Error("user is not valied")
+            }
+            const isAdmin= user.role === UserRole.ADMIN
+            // console.log(isAdmin)
+         const result = await postService.deletePost(postId as string,user?.id,isAdmin as boolean)
+        //  console.log(user)
+         res.status(200).json({
+            success:true,
+            message:' DELETED post  successfully',
+            data:result
+        })
+    } catch (error:any) {
+        console.log(error)
+        res.status(404).json({
+            success:false,
+            message:'post does not DELETED',
+            data:error.message
+        })
+    }
+   
+
+}
+
+const getStats=async(req:Request,res:Response)=>{
+
+    try {
+            
+           const user= req.user
+           console.log(user)
+            // console.log(isAdmin)
+         const result = await postService.getStats()
+        //  console.log(user)
+         res.status(200).json({
+            success:true,
+            message:' get all count successfully',
+            data:result
+        })
+    } catch (error:any) {
+        console.log(error)
+        res.status(404).json({
+            success:false,
+            message:' dont fount ant count',
+            data:error.message
+        })
+    }
+   
+
+}
 export const postController={
         createPost,
         findAllPost,
         findPostById,
         getMyPosts,
-        updateUserOwnPost
+        updateUserOwnPost,
+        deletePost,
+        getStats
 }
