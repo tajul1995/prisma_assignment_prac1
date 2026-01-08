@@ -1,3 +1,4 @@
+import { CommentStatus } from "../../../generated/prisma/enums"
 import { prisma } from "../../lib/prisma"
 
 type Comment={
@@ -69,8 +70,53 @@ const getCommentByauthor=async(Id:string)=>{
         total:count
     }
 }
+
+const deleteCommentById=async(commentId:string,authorId:string)=>{
+    const findComment=await prisma.comment.findFirst({
+        where:{
+            id:commentId,
+            authorId
+        }
+    })
+    if(!findComment){
+        throw new Error("invalied aithorid")
+    }
+    return await prisma.comment.delete({
+        where:{
+            id:commentId
+        }
+    })
+}
+
+const updateComment=async(commentId:string,data:{content?:string,status?:CommentStatus},authorId:string)=>{
+ const findComment=await prisma.comment.findFirst({
+        where:{
+            id:commentId,
+            authorId
+        }
+    })
+    if(!findComment){
+        throw new Error("invalied aithorid")
+    }
+
+
+return await prisma.comment.update({
+    where:{
+        id:commentId
+    },
+    data
+})
+
+
+
+
+
+}
+    
 export const  commentService={
     createComment,
     getCommentById,
-    getCommentByauthor
+    getCommentByauthor,
+    deleteCommentById,
+    updateComment
 }
