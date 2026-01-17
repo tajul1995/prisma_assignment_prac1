@@ -1,27 +1,23 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { postService } from "./post.service";
 import { PostStatus } from "../../../generated/prisma/enums";
 import paginationSortingHelpers from "../../helpers/paginationSortingHelpers";
 import { UserRole } from "../../middleWare/auth";
 
-const createPost=async(req:Request,res: Response)=>{
+const createPost=async(req:Request,res: Response,next:NextFunction)=>{
     try {
         const post=req.body
         const fulluser=req.user
         // console.log(post,fulluser)
          const result = await postService.createPost(post,fulluser?.id as string)
-         console.log(result)
+        //  console.log(result)
          res.status(200).json({
             success:true,
             message:'post created successfully',
             data:result
         })
     } catch (error:any) {
-        res.status(404).json({
-            success:false,
-            message:'post created failed',
-            data:error.message
-        })
+        next(error)
     }
    
 }
@@ -113,7 +109,7 @@ const getMyPosts=async(req:Request,res:Response)=>{
 }
 
 
-const updateUserOwnPost=async(req:Request,res:Response)=>{
+const updateUserOwnPost=async(req:Request,res:Response,next:NextFunction)=>{
 
     try {
             const user= req.user
@@ -133,12 +129,8 @@ const updateUserOwnPost=async(req:Request,res:Response)=>{
             data:result
         })
     } catch (error:any) {
-        console.log(error)
-        res.status(404).json({
-            success:false,
-            message:'post does not updated failed',
-            data:error.message
-        })
+        // console.log(error)
+        next(error)
     }
    
 
